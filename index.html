@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>Fiscal Intelligence Talks · Sua foto do evento</title>
+    <meta name="theme-color" content="#062632" />
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📸</text></svg>" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="page">
+      <div class="topbar"></div>
+
+      <div class="shell">
+        <!-- header / marca -->
+        <header class="brandbar">
+          <img class="logo-nfe" id="logoNfe" src="assets/logo-gradient.png" alt="NFE.io" />
+          <span class="brand-text" id="logoNfeText" hidden>NFE<span class="accent">.io</span></span>
+          <span class="brand-divider"></span>
+          <img class="inovabra-badge" id="logoInova" src="assets/inovabra-badge.png" alt="inovabra habitat" />
+          <span class="brand-text-sub" id="logoInovaText" hidden>inovabra habitat</span>
+        </header>
+
+        <!-- hero -->
+        <div class="hero">
+          <div class="badge"><span class="dot"></span>24 jun 2026 · Inovabra Habitat</div>
+          <h1>Leve sua foto<br />do evento</h1>
+          <p>Envie uma foto e baixe com a moldura oficial do <strong>Fiscal Intelligence Talks</strong>.</p>
+        </div>
+
+        <!-- área interativa -->
+        <div class="stage">
+          <!-- idle: upload -->
+          <div id="idle">
+            <label class="dropzone" id="dropzone">
+              <input type="file" id="fileInput" accept="image/*" />
+              <span class="dz-icon">
+                <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#062632" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"></path>
+                  <circle cx="12" cy="13" r="3.2"></circle>
+                </svg>
+              </span>
+              <span class="dz-title">Toque para enviar sua foto</span>
+              <span class="dz-sub">câmera ou galeria do celular</span>
+            </label>
+            <p class="hint">A moldura — vertical ou horizontal — é escolhida automaticamente conforme sua foto.</p>
+          </div>
+
+          <!-- busy: processando -->
+          <div id="busy" class="busy" hidden>
+            <span class="spinner"></span>
+            <span class="busy-label">Aplicando moldura…</span>
+          </div>
+
+          <!-- ready: preview + download -->
+          <div id="result" class="result" hidden>
+            <img id="preview" alt="Sua foto com a moldura" />
+            <div class="applied"><span class="dot"></span><span id="appliedLabel">Moldura vertical aplicada</span></div>
+            <div class="actions">
+              <a id="downloadBtn" class="btn-download" download="foto-fiscal-intelligence-talks.png" href="#">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#062632" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                  <polyline points="7 10 12 15 17 10"></polyline>
+                  <line x1="12" y1="15" x2="12" y2="3"></line>
+                </svg>
+                Baixar minha foto
+              </a>
+              <button id="resetBtn" class="btn-secondary" type="button">Trocar foto</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- footer -->
+        <footer class="footer">NFE.io × inovabra habitat</footer>
+      </div>
+    </div>
+
+    <script src="app.js"></script>
+  </body>
+</html>

@@ -1,0 +1,13 @@
+{
+  "name": "event-snap",
+  "version": "2.0.0",
+  "description": "Aplica molduras Polaroid (NFE.io) a fotos de evento — 100% no navegador, sem upload de imagens.",
+  "license": "MIT",
+  "type": "commonjs",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": ">=14"
+  }
+}
