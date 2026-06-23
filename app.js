@@ -41,6 +41,16 @@ function shortHash(len = 7) {
 const els = {};
 const frameImgs = {};
 let resultUrl = null;
+let resultFile = null; // File PNG composto (para Web Share no iOS)
+let resultName = null; // nome com hash, reutilizado no download e no share
+
+// iOS/iPadOS: o atributo download é pouco confiável; preferimos a Web Share API.
+// iPadOS 13+ se apresenta como "Mac", por isso o segundo teste (touch).
+function isIOS() {
+  const ua = navigator.userAgent || "";
+  if (/iPad|iPhone|iPod/.test(ua)) return true;
+  return navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1;
+}
 
 /* ------------------------------------------------------------------ */
 /* Composição (Canvas)                                                 */
@@ -132,6 +142,8 @@ async function compose(file) {
     if (photo._objUrl) URL.revokeObjectURL(photo._objUrl);
     if (resultUrl) URL.revokeObjectURL(resultUrl);
     resultUrl = URL.createObjectURL(blob);
+    resultName = `${DOWNLOAD_BASE}-${shortHash()}.png`;
+    resultFile = new File([blob], resultName, { type: "image/png" });
 
     showResult(resultUrl, orient);
   } catch (err) {
@@ -156,7 +168,7 @@ function showState(state) {
 function showResult(url, orient) {
   els.preview.src = url;
   els.downloadBtn.href = url;
-  els.downloadBtn.download = `${DOWNLOAD_BASE}-${shortHash()}.png`;
+  els.downloadBtn.download = resultName;
   els.appliedLabel.textContent =
     "Moldura " + (orient === "landscape" ? "horizontal" : "vertical") + " aplicada";
   showState("result");
@@ -167,7 +179,41 @@ function reset() {
     URL.revokeObjectURL(resultUrl);
     resultUrl = null;
   }
+  resultFile = null;
+  resultName = null;
   showState("idle");
+}
+
+// No iOS, abre a folha de compartilhamento nativa (com "Salvar Imagem" /
+// "Adicionar às Fotos") em vez de um download que o Safari costuma ignorar.
+// Desktop/Android continuam no download direto via <a download>.
+async function onDownloadClick(e) {
+  if (!resultFile) return;
+  const canShareFile =
+    isIOS() && navigator.canShare && navigator.canShare({ files: [resultFile] });
+  if (!canShareFile) return; // deixa o comportamento padrão do <a download>
+
+  e.preventDefault();
+  try {
+    await navigator.share({
+      files: [resultFile],
+      title: "Fiscal Intelligence Talks",
+      text: "Minha foto do Fiscal Intelligence Talks 📸",
+    });
+  } catch (err) {
+    if (err && err.name === "AbortError") return; // usuário cancelou
+    forceDownload(); // qualquer outra falha → cai para o download
+  }
+}
+
+function forceDownload() {
+  if (!resultUrl) return;
+  const a = document.createElement("a");
+  a.href = resultUrl;
+  a.download = resultName || `${DOWNLOAD_BASE}.png`;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
 }
 
 /* ------------------------------------------------------------------ */
@@ -205,6 +251,7 @@ function init() {
     if (file) compose(file);
   });
   els.resetBtn.addEventListener("click", reset);
+  els.downloadBtn.addEventListener("click", onDownloadClick);
 
   // Drag-and-drop (desktop)
   ["dragenter", "dragover"].forEach((evt) =>
