@@ -14,7 +14,29 @@ const FRAMES = {
 
 // "auto" escolhe pela orientação da foto; "vertical"/"horizontal" forçam uma moldura.
 const FORMATO_FIXO = "auto";
-const DOWNLOAD_NAME = "foto-fiscal-intelligence-talks.png";
+// Cada download recebe um hash curto no final do nome para ser único — evita
+// conflito/sobrescrita ao salvar várias fotos (ex.: iOS, que não pergunta).
+const DOWNLOAD_BASE = "foto-fiscal-intelligence-talks";
+
+// Hash curto alfanumérico (a-z0-9) usando crypto quando disponível.
+function shortHash(len = 7) {
+  const alphabet = "abcdefghijklmnopqrstuvwxyz0123456789";
+  const rng = (typeof crypto !== "undefined" && crypto.getRandomValues)
+    ? () => {
+        const bytes = new Uint8Array(len);
+        crypto.getRandomValues(bytes);
+        return bytes;
+      }
+    : () => {
+        const bytes = new Uint8Array(len);
+        for (let i = 0; i < len; i++) bytes[i] = Math.floor(Math.random() * 256);
+        return bytes;
+      };
+  const bytes = rng();
+  let out = "";
+  for (let i = 0; i < len; i++) out += alphabet[bytes[i] % alphabet.length];
+  return out;
+}
 
 const els = {};
 const frameImgs = {};
@@ -134,7 +156,7 @@ function showState(state) {
 function showResult(url, orient) {
   els.preview.src = url;
   els.downloadBtn.href = url;
-  els.downloadBtn.download = DOWNLOAD_NAME;
+  els.downloadBtn.download = `${DOWNLOAD_BASE}-${shortHash()}.png`;
   els.appliedLabel.textContent =
     "Moldura " + (orient === "landscape" ? "horizontal" : "vertical") + " aplicada";
   showState("result");
