@@ -1,0 +1,3 @@
+# Bloqueia indexação por buscadores em todas as rotas (Cloudflare Pages)
+/*
+  X-Robots-Tag: noindex, nofollow
